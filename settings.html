@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DLP-Utility - Settings</title>
+<link rel="icon" href="/app_icon.ico" type="image/x-icon"/>
+<meta name="application-name" content="DLP-Utility"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-error": "#690005", "primary-container": "#4b8eff", "tertiary": "#bcc7de",
+          "surface-container-low": "#131b2e", "error-container": "#93000a",
+          "surface-container": "#171f33", "on-background": "#dae2fd",
+          "on-tertiary-fixed": "#111c2d", "on-secondary": "#233143",
+          "outline-variant": "#414755", "inverse-surface": "#dae2fd",
+          "secondary-fixed-dim": "#b9c8de", "secondary": "#b9c8de",
+          "on-secondary-fixed": "#0d1c2d", "surface-dim": "#0b1326",
+          "background": "#0b1326", "tertiary-container": "#8691a7",
+          "on-secondary-fixed-variant": "#39485a", "error": "#ffb4ab",
+          "on-surface": "#dae2fd", "on-primary-fixed-variant": "#004493",
+          "outline": "#8b90a0", "surface-container-highest": "#2d3449",
+          "on-error-container": "#ffdad6", "tertiary-fixed": "#d8e3fb",
+          "on-surface-variant": "#c1c6d7", "primary-fixed-dim": "#adc6ff",
+          "inverse-on-surface": "#283044", "on-primary-fixed": "#001a41",
+          "on-tertiary": "#263143", "secondary-fixed": "#d4e4fa",
+          "surface-bright": "#31394d", "on-primary": "#002e69",
+          "primary": "#adc6ff", "surface": "#0b1326", "inverse-primary": "#005bc1",
+          "surface-container-high": "#222a3d", "tertiary-fixed-dim": "#bcc7de",
+          "on-primary-container": "#00285c", "surface-container-lowest": "#060e20",
+          "surface-variant": "#2d3449", "on-secondary-container": "#a7b6cc",
+          "secondary-container": "#39485a", "on-tertiary-container": "#1f2a3c",
+          "on-tertiary-fixed-variant": "#3c475a", "surface-tint": "#adc6ff",
+          "primary-fixed": "#d8e2ff"
+        },
+        "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+        "spacing": { "unit-2": "8px", "gutter": "16px", "container-margin": "24px", "unit-4": "16px", "unit-6": "24px", "unit-8": "32px", "base": "4px", "unit-1": "4px", "unit-3": "12px" },
+        "fontFamily": { "headline-md": ["Inter"], "mono-label": ["JetBrains Mono"], "label-caps": ["Inter"], "display-lg": ["Inter"], "body-sm": ["Inter"], "title-sm": ["Inter"], "body-md": ["Inter"] },
+        "fontSize": {
+          "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "mono-label":  ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+          "label-caps":  ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "display-lg":  ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "body-sm":     ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+          "title-sm":    ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+          "body-md":     ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+  body { background-color: #0b1326; color: #dae2fd; font-family: 'Inter', sans-serif; width: 100%; height: 100vh; margin: 0; overflow: hidden; }
+  html, body { height: 100%; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0b1326; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  .settings-card { border: 1px solid #334155; transition: border-color 0.2s ease; }
+  .settings-card:hover { border-color: #4b8eff; }
+  .toggle-track { position: relative; width: 36px; height: 20px; background: #2d3449; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+  .toggle-track.on { background: #4b8eff; }
+  .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform 0.2s; }
+  .toggle-track.on .toggle-thumb { transform: translateX(16px); }
+  .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-family: Inter, sans-serif; transition: opacity 0.3s; }
+  .toast.success { background: #1a2e1a; border: 1px solid #4caf50; color: #81c784; }
+  .toast.error   { background: #2e1a1a; border: 1px solid #f44336; color: #e57373; }
+</style>
+</head>
+<body class="flex">
+
+<!-- SideNavBar -->
+<aside class="w-60 h-full flex-shrink-0 bg-surface-container border-r border-outline-variant flex flex-col py-unit-4 z-20">
+  <div class="px-gutter mb-unit-6">
+    <div class="flex items-center gap-unit-2 mb-unit-1">
+      <span class="material-symbols-outlined text-primary text-headline-md">cloud_download</span>
+      <span class="font-headline-md text-headline-md text-on-surface">DLP-Utility</span>
+    </div>
+    <p class="font-label-caps text-label-caps text-on-surface-variant" id="ytdlp-version">loading…</p>
+  </div>
+  <nav class="flex-1 flex flex-col gap-0.5">
+    <a class="flex items-center gap-3 px-gutter py-2.5 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200" href="/">
+      <span class="material-symbols-outlined text-lg">dashboard</span>
+      <span class="font-label-caps text-[10px] uppercase tracking-wider">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-3 px-gutter py-2.5 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200" href="/queue">
+      <span class="material-symbols-outlined text-lg">list_alt</span>
+      <span class="font-label-caps text-[10px] uppercase tracking-wider">Queue</span>
+    </a>
+    <div class="mt-4 px-gutter">
+      <button onclick="window.location='/'" class="w-full bg-primary-container/10 border border-primary/20 text-primary py-2 px-2 flex items-center justify-center gap-2 hover:bg-primary-container/20 transition-all cursor-pointer active:scale-95">
+        <span class="material-symbols-outlined text-sm">add</span>
+        <span class="font-label-caps text-[10px] uppercase tracking-wider">New Download</span>
+      </button>
+    </div>
+  </nav>
+  <footer class="flex flex-col gap-0.5 mt-auto">
+    <a class="flex items-center gap-3 px-gutter py-2.5 text-primary bg-primary-container/10 border-r-2 border-primary transition-all duration-200" href="/settings">
+      <span class="material-symbols-outlined text-lg">settings</span>
+      <span class="font-label-caps text-[10px] uppercase tracking-wider">Settings</span>
+    </a>
+  </footer>
+</aside>
+
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-surface-dim overflow-hidden">
+  <header class="w-full h-16 bg-surface-dim border-b border-outline-variant flex items-center px-gutter flex-shrink-0 z-10">
+    <h2 class="font-headline-md text-[16px] text-on-surface-variant">Settings</h2>
+  </header>
+
+  <div class="flex-1 overflow-y-auto p-unit-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="mb-unit-6">
+        <h1 class="font-display-lg text-headline-md text-on-surface mb-1">Advanced Configuration</h1>
+        <p class="font-body-md text-body-sm text-on-surface-variant max-w-2xl">Tailor DLP-Utility to your specific archival needs. These settings modify core execution arguments.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+
+        <!-- Left Column -->
+        <section class="lg:col-span-7 flex flex-col gap-gutter">
+
+          <!-- Storage & Paths -->
+          <div class="settings-card bg-surface-container p-unit-4 rounded-xl">
+            <div class="flex items-center gap-3 mb-unit-4">
+              <span class="material-symbols-outlined text-primary text-lg">folder_open</span>
+              <h2 class="font-title-sm text-body-md font-semibold text-on-surface">Storage &amp; Paths</h2>
+            </div>
+            <div class="space-y-unit-4">
+              <div>
+                <label class="font-label-caps text-[10px] text-on-surface-variant block mb-1.5 uppercase">Default Download Directory</label>
+                <div class="flex gap-2">
+                  <input id="download-dir" class="flex-1 bg-surface-dim border border-outline-variant px-3 py-1.5 font-mono-label text-[11px] text-on-surface focus:ring-1 focus:ring-primary outline-none rounded" type="text" placeholder="/path/to/downloads"/>
+                  <button id="browse-dir-btn" class="bg-surface-container-highest px-3 py-1.5 hover:bg-outline-variant transition-colors flex items-center gap-2 border border-outline-variant rounded">
+                    <span class="material-symbols-outlined text-xs">browse_gallery</span>
+                    <span class="font-label-caps text-[10px] uppercase">Browse</span>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="font-label-caps text-[10px] text-on-surface-variant block mb-1.5 uppercase">Output Filename Template</label>
+                <input id="filename-template" class="w-full bg-surface-dim border border-outline-variant px-3 py-1.5 font-mono-label text-[11px] text-on-surface focus:ring-1 focus:ring-primary outline-none rounded" type="text" value="%(title)s [%(id)s].%(ext)s"/>
+                <p class="font-label-caps text-[9px] text-outline mt-1 italic">Available: %(uploader)s, %(upload_date)s, %(resolution)s</p>
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <div class="flex flex-col">
+                  <span class="font-body-md text-body-sm text-on-surface">Overwrite Existing Files</span>
+                  <span class="font-body-sm text-[11px] text-on-surface-variant">Replace files with identical names.</span>
+                </div>
+                <div id="toggle-overwrite" class="toggle-track" onclick="toggleSwitch(this, 'overwrite')">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post-Processing -->
+          <div class="settings-card bg-surface-container p-unit-4 rounded-xl">
+            <div class="flex items-center gap-3 mb-unit-4">
+              <span class="material-symbols-outlined text-primary text-lg">movie_edit</span>
+              <h2 class="font-title-sm text-body-md font-semibold text-on-surface">Post-Processing Options</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <label class="p-3 border border-outline-variant bg-surface-dim flex items-start gap-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-lg">
+                <input id="cb-embed-metadata" type="checkbox" class="w-3.5 h-3.5 rounded-sm bg-surface-container border-outline text-primary focus:ring-0 mt-0.5"/>
+                <div>
+                  <p class="font-body-md text-[13px] text-on-surface font-semibold leading-tight">Embed Metadata</p>
+                  <p class="font-body-sm text-[11px] text-on-surface-variant">Description and tags.</p>
+                </div>
+              </label>
+              <label class="p-3 border border-outline-variant bg-surface-dim flex items-start gap-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-lg">
+                <input id="cb-write-subtitles" type="checkbox" class="w-3.5 h-3.5 rounded-sm bg-surface-container border-outline text-primary focus:ring-0 mt-0.5"/>
+                <div>
+                  <p class="font-body-md text-[13px] text-on-surface font-semibold leading-tight">Write Subtitles</p>
+                  <p class="font-body-sm text-[11px] text-on-surface-variant">Embed video subtitles.</p>
+                </div>
+              </label>
+              <label class="p-3 border border-outline-variant bg-surface-dim flex items-start gap-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-lg">
+                <input id="cb-embed-thumbnail" type="checkbox" class="w-3.5 h-3.5 rounded-sm bg-surface-container border-outline text-primary focus:ring-0 mt-0.5"/>
+                <div>
+                  <p class="font-body-md text-[13px] text-on-surface font-semibold leading-tight">Embed Thumbnail</p>
+                  <p class="font-body-sm text-[11px] text-on-surface-variant">Use cover art as icon.</p>
+                </div>
+              </label>
+              <label class="p-3 border border-outline-variant bg-surface-dim flex items-start gap-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-lg">
+                <input id="cb-recode-video" type="checkbox" class="w-3.5 h-3.5 rounded-sm bg-surface-container border-outline text-primary focus:ring-0 mt-0.5"/>
+                <div>
+                  <p class="font-body-md text-[13px] text-on-surface font-semibold leading-tight">Recode Video</p>
+                  <p class="font-body-sm text-[11px] text-on-surface-variant">Convert to MP4 via FFmpeg.</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Column -->
+        <aside class="lg:col-span-5 flex flex-col gap-gutter">
+
+          <!-- Authentication -->
+          <div class="settings-card bg-surface-container p-unit-4 rounded-xl">
+            <div class="flex items-center gap-3 mb-unit-4">
+              <span class="material-symbols-outlined text-primary text-lg">key</span>
+              <h2 class="font-title-sm text-body-md font-semibold text-on-surface">Authentication</h2>
+            </div>
+            <div class="space-y-unit-3">
+              <div class="p-3 bg-surface-container-low border-l-2 border-primary rounded-r-lg">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-label-caps text-[10px] text-on-surface uppercase">Cookies File</span>
+                  <span id="cookies-status-icon" class="material-symbols-outlined text-xs text-on-surface-variant">radio_button_unchecked</span>
+                </div>
+                <p id="cookies-path-display" class="font-mono-label text-[9px] text-on-surface-variant break-all">Not set</p>
+              </div>
+              <button id="update-cookies-btn" class="w-full bg-surface-container-highest text-on-surface font-label-caps text-[10px] py-1.5 uppercase border border-outline-variant hover:border-primary transition-all flex items-center justify-center gap-2 rounded">
+                <span class="material-symbols-outlined text-xs">upload_file</span>
+                Update Cookies
+              </button>
+              <div class="pt-1">
+                <label class="font-label-caps text-[10px] text-on-surface-variant block mb-1.5 uppercase">Global Proxy</label>
+                <input id="proxy-input" class="w-full bg-surface-dim border border-outline-variant px-3 py-1.5 font-mono-label text-[11px] text-on-surface focus:ring-1 focus:ring-primary outline-none rounded" placeholder="socks5://127.0.0.1:9050" type="text"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Network Limits -->
+          <div class="settings-card bg-surface-container p-unit-4 rounded-xl">
+            <div class="flex items-center gap-3 mb-unit-4">
+              <span class="material-symbols-outlined text-primary text-lg">speed</span>
+              <h2 class="font-title-sm text-body-md font-semibold text-on-surface">Network Limits</h2>
+            </div>
+            <div class="space-y-unit-3">
+              <div>
+                <div class="flex justify-between mb-1.5">
+                  <label class="font-label-caps text-[10px] text-on-surface-variant uppercase">Max Download Rate</label>
+                  <span class="font-mono-label text-[11px] text-primary" id="rate-display">Unlimited</span>
+                </div>
+                <input id="rate-range" class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="1000" min="0" type="range" value="0"/>
+              </div>
+              <div>
+                <label class="font-label-caps text-[10px] text-on-surface-variant block mb-1.5 uppercase">Concurrent Downloads</label>
+                <select id="concurrent-select" class="w-full bg-surface-dim border border-outline-variant px-3 py-1.5 text-[12px] text-on-surface focus:ring-1 focus:ring-primary outline-none rounded">
+                  <option value="1">1 Download</option>
+                  <option value="2">2 Downloads</option>
+                  <option value="4">4 Downloads</option>
+                  <option value="8">8 Downloads</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dependency Status -->
+          <div class="settings-card bg-primary-container/5 p-unit-4 border-primary/20 rounded-xl">
+            <div class="flex items-center justify-between mb-unit-2">
+              <span class="font-label-caps text-[10px] text-primary uppercase">Dependency Status</span>
+              <span id="dep-pulse" class="inline-flex h-2 w-2 rounded-full bg-outline-variant"></span>
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex justify-between items-center text-[11px]">
+                <span class="text-on-surface-variant">FFmpeg</span>
+                <span id="dep-ffmpeg" class="text-on-surface">Checking…</span>
+              </div>
+              <div class="flex justify-between items-center text-[11px]">
+                <span class="text-on-surface-variant">DLP-Utility (system PATH)</span>
+                <span id="dep-ytdlp" class="text-on-surface">Checking…</span>
+              </div>
+              <div class="flex justify-between items-center text-[11px]">
+                <span class="text-on-surface-variant">Python</span>
+                <span id="dep-python" class="text-on-surface">Checking…</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="mt-unit-6 pt-unit-4 border-t border-outline-variant flex justify-end items-center gap-4">
+        <button id="discard-btn" class="px-4 py-1.5 text-on-surface-variant font-label-caps text-[11px] uppercase hover:text-on-surface transition-colors">Discard Changes</button>
+        <button id="save-btn" class="bg-primary text-on-primary px-5 py-2 font-label-caps text-[11px] uppercase font-bold hover:brightness-110 active:scale-95 transition-all rounded">Save &amp; Apply Config</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Background texture -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-0">
+  <div class="absolute inset-0 bg-[radial-gradient(#4b8eff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+</div>
+
+<script>
+let originalSettings = {};
+
+function api(path, opts = {}) {
+  return fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts }).then(r => r.json());
+}
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// ─── Toggle switches ──────────────────────────────────────────────────────────
+function toggleSwitch(el, _key) {
+  el.classList.toggle('on');
+}
+
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  if (val) el.classList.add('on');
+  else     el.classList.remove('on');
+}
+
+function getToggle(id) {
+  return document.getElementById(id).classList.contains('on');
+}
+
+// ─── Rate slider ──────────────────────────────────────────────────────────────
+const rateRange   = document.getElementById('rate-range');
+const rateDisplay = document.getElementById('rate-display');
+rateRange.addEventListener('input', () => {
+  const v = parseInt(rateRange.value);
+  rateDisplay.textContent = v === 0 ? 'Unlimited' : (v / 10).toFixed(1) + ' MB/s';
+});
+
+function getRateMb() {
+  const v = parseInt(rateRange.value);
+  return v === 0 ? 0 : v / 10;
+}
+
+function setRate(mb) {
+  const v = mb === 0 ? 0 : Math.round(mb * 10);
+  rateRange.value = v;
+  rateDisplay.textContent = mb === 0 ? 'Unlimited' : mb.toFixed(1) + ' MB/s';
+}
+
+// ─── Load settings ────────────────────────────────────────────────────────────
+function applySettings(s) {
+  originalSettings = { ...s };
+  document.getElementById('download-dir').value       = s.download_dir || '';
+  document.getElementById('filename-template').value  = s.filename_template || '';
+  document.getElementById('cb-embed-metadata').checked  = !!s.embed_metadata;
+  document.getElementById('cb-write-subtitles').checked  = !!s.write_subtitles;
+  document.getElementById('cb-embed-thumbnail').checked = !!s.embed_thumbnail;
+  document.getElementById('cb-recode-video').checked     = !!s.recode_video;
+  document.getElementById('proxy-input').value        = s.proxy || '';
+  setToggle('toggle-overwrite', s.overwrite);
+  setRate(s.max_rate || 0);
+
+  const conc = document.getElementById('concurrent-select');
+  conc.value = String(s.concurrent || 4);
+
+  const cookiesPath = s.cookies_file || '';
+  document.getElementById('cookies-path-display').textContent = cookiesPath || 'Not set';
+  const icon = document.getElementById('cookies-status-icon');
+  if (cookiesPath) {
+    icon.textContent = 'check_circle';
+    icon.className   = 'material-symbols-outlined text-xs text-green-400';
+  } else {
+    icon.textContent = 'radio_button_unchecked';
+    icon.className   = 'material-symbols-outlined text-xs text-on-surface-variant';
+  }
+}
+
+function collectSettings() {
+  return {
+    download_dir:      document.getElementById('download-dir').value.trim(),
+    filename_template: document.getElementById('filename-template').value.trim(),
+    embed_metadata:    document.getElementById('cb-embed-metadata').checked,
+    write_subtitles:   document.getElementById('cb-write-subtitles').checked,
+    embed_thumbnail:   document.getElementById('cb-embed-thumbnail').checked,
+    recode_video:      document.getElementById('cb-recode-video').checked,
+    overwrite:         getToggle('toggle-overwrite'),
+    proxy:             document.getElementById('proxy-input').value.trim(),
+    max_rate:          getRateMb(),
+    concurrent:        parseInt(document.getElementById('concurrent-select').value),
+    cookies_file:      originalSettings.cookies_file || '',
+  };
+}
+
+// ─── Browse buttons ───────────────────────────────────────────────────────────
+document.getElementById('browse-dir-btn').addEventListener('click', async () => {
+  const res = await api('/api/browse', { method: 'POST', body: '{}' });
+  if (res.error) {
+    toast('Browse failed: ' + res.error, 'error');
+  }
+  if (res.path) document.getElementById('download-dir').value = res.path;
+});
+
+document.getElementById('update-cookies-btn').addEventListener('click', async () => {
+  const res = await api('/api/browse-file', { method: 'POST', body: '{}' });
+  if (res.error) {
+    toast('Browse failed: ' + res.error, 'error');
+  }
+  if (res.path) {
+    originalSettings.cookies_file = res.path;
+    document.getElementById('cookies-path-display').textContent = res.path;
+    const icon = document.getElementById('cookies-status-icon');
+    icon.textContent = 'check_circle';
+    icon.className   = 'material-symbols-outlined text-xs text-green-400';
+    toast('Cookies file selected');
+  }
+});
+
+// ─── Save / Discard ───────────────────────────────────────────────────────────
+document.getElementById('save-btn').addEventListener('click', async () => {
+  const s = collectSettings();
+  const res = await api('/api/settings', { method: 'POST', body: JSON.stringify(s) });
+  if (res.ok) toast('Settings saved ✓');
+  else toast('Failed to save settings', 'error');
+});
+
+document.getElementById('discard-btn').addEventListener('click', () => {
+  applySettings(originalSettings);
+  toast('Changes discarded');
+});
+
+// ─── Dependency check ─────────────────────────────────────────────────────────
+async function checkDeps() {
+  const d = await api('/api/check');
+  document.getElementById('dep-ytdlp').textContent  = d.ytdlp  ? `v${d.ytdlp} — Installed` : '✗ Not found in PATH';
+  document.getElementById('dep-ffmpeg').textContent = d.ffmpeg ? `v${d.ffmpeg} — Installed` : '✗ Not found';
+  document.getElementById('dep-python').textContent = `v${d.python}`;
+  document.getElementById('ytdlp-version').textContent = d.ytdlp ? `v${d.ytdlp}` : 'not found';
+
+  const allGood = d.ytdlp && d.ffmpeg;
+  const pulse = document.getElementById('dep-pulse');
+  pulse.className = `inline-flex h-2 w-2 rounded-full ${allGood ? 'bg-green-500 animate-pulse' : 'bg-error'}`;
+
+  if (!d.ytdlp) document.getElementById('dep-ytdlp').className = 'text-error';
+  if (!d.ffmpeg) document.getElementById('dep-ffmpeg').className = 'text-on-surface-variant';
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  const s = await api('/api/settings');
+  applySettings(s);
+  checkDeps();
+}
+
+init();
+</script>
+</body></html>

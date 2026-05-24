@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DLP-Utility - Dashboard</title>
+<link rel="icon" href="/app_icon.ico" type="image/x-icon"/>
+<meta name="application-name" content="DLP-Utility"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-error": "#690005", "primary-container": "#4b8eff", "tertiary": "#bcc7de",
+          "surface-container-low": "#131b2e", "error-container": "#93000a",
+          "surface-container": "#171f33", "on-background": "#dae2fd",
+          "on-tertiary-fixed": "#111c2d", "on-secondary": "#233143",
+          "outline-variant": "#414755", "inverse-surface": "#dae2fd",
+          "secondary-fixed-dim": "#b9c8de", "secondary": "#b9c8de",
+          "on-secondary-fixed": "#0d1c2d", "surface-dim": "#0b1326",
+          "background": "#0b1326", "tertiary-container": "#8691a7",
+          "on-secondary-fixed-variant": "#39485a", "error": "#ffb4ab",
+          "on-surface": "#dae2fd", "on-primary-fixed-variant": "#004493",
+          "outline": "#8b90a0", "surface-container-highest": "#2d3449",
+          "on-error-container": "#ffdad6", "tertiary-fixed": "#d8e3fb",
+          "on-surface-variant": "#c1c6d7", "primary-fixed-dim": "#adc6ff",
+          "inverse-on-surface": "#283044", "on-primary-fixed": "#001a41",
+          "on-tertiary": "#263143", "secondary-fixed": "#d4e4fa",
+          "surface-bright": "#31394d", "on-primary": "#002e69",
+          "primary": "#adc6ff", "surface": "#0b1326", "inverse-primary": "#005bc1",
+          "surface-container-high": "#222a3d", "tertiary-fixed-dim": "#bcc7de",
+          "on-primary-container": "#00285c", "surface-container-lowest": "#060e20",
+          "surface-variant": "#2d3449", "on-secondary-container": "#a7b6cc",
+          "secondary-container": "#39485a", "on-tertiary-container": "#1f2a3c",
+          "on-tertiary-fixed-variant": "#3c475a", "surface-tint": "#adc6ff",
+          "primary-fixed": "#d8e2ff"
+        },
+        "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+        "spacing": { "unit-2": "8px", "gutter": "16px", "container-margin": "24px", "unit-4": "16px", "unit-6": "24px", "unit-8": "32px", "base": "4px", "unit-1": "4px", "unit-3": "12px" },
+        "fontFamily": { "headline-md": ["Inter"], "mono-label": ["JetBrains Mono"], "label-caps": ["Inter"], "display-lg": ["Inter"], "body-sm": ["Inter"], "title-sm": ["Inter"], "body-md": ["Inter"] },
+        "fontSize": {
+          "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "mono-label":  ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+          "label-caps":  ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "display-lg":  ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "body-sm":     ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+          "title-sm":    ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+          "body-md":     ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+  body { background-color: #0b1326; color: #dae2fd; -webkit-font-smoothing: antialiased; width: 100%; height: 100vh; margin: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: #0b1326; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #414755; border-radius: 10px; }
+  .fmt-btn.active { border-color: #adc6ff !important; color: #adc6ff !important; background-color: rgba(75,142,255,0.1) !important; }
+  #quality-dropdown { display: none; }
+  #quality-dropdown.open { display: block; }
+  .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-family: Inter, sans-serif; transition: opacity 0.3s; }
+  .toast.success { background: #1a2e1a; border: 1px solid #4caf50; color: #81c784; }
+  .toast.error   { background: #2e1a1a; border: 1px solid #f44336; color: #e57373; }
+</style>
+</head>
+<body class="font-body-md text-body-md overflow-hidden flex">
+
+<!-- SideNavBar -->
+<aside class="w-56 h-full bg-surface-container border-r border-outline-variant flex flex-col py-unit-4 shrink-0">
+  <div class="px-unit-4 mb-unit-6 flex items-center gap-3">
+    <div class="w-9 h-9 bg-primary-container rounded flex items-center justify-center text-on-primary-container">
+      <span class="material-symbols-outlined" style="font-size: 20px;">download</span>
+    </div>
+    <div>
+      <h1 class="font-headline-md text-[20px] leading-6 text-on-surface">DLP-Utility</h1>
+      <p class="font-label-caps text-[10px] text-on-surface-variant" id="ytdlp-version">loading…</p>
+    </div>
+  </div>
+  <div class="px-unit-4 mb-unit-4">
+    <button onclick="scrollToInput()" class="w-full bg-primary-container text-on-primary-container font-label-caps text-[10px] py-2.5 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+      <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+      New Download
+    </button>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a class="flex items-center gap-3 px-unit-4 py-2.5 text-primary bg-primary-container/10 border-r-2 border-primary transition-all duration-200" href="/">
+      <span class="material-symbols-outlined" style="font-size: 20px;">dashboard</span>
+      <span class="font-label-caps text-[11px]">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-3 px-unit-4 py-2.5 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200" href="/queue">
+      <span class="material-symbols-outlined" style="font-size: 20px;">list_alt</span>
+      <span class="font-label-caps text-[11px]">Queue</span>
+    </a>
+  </nav>
+  <div class="mt-auto border-t border-outline-variant pt-unit-2 space-y-1">
+    <a class="flex items-center gap-3 px-unit-4 py-2.5 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200" href="/settings">
+      <span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+      <span class="font-label-caps text-[11px]">Settings</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="flex-1 h-full flex flex-col relative overflow-hidden bg-surface-dim">
+  <header class="w-full h-14 bg-surface-dim border-b border-outline-variant flex items-center px-gutter shrink-0">
+    <h2 class="font-headline-md text-[16px] text-on-surface-variant">Dashboard</h2>
+  </header>
+
+  <div class="flex-1 overflow-y-auto custom-scrollbar p-unit-6 flex flex-col gap-unit-6">
+
+    <!-- URL Input -->
+    <section class="max-w-3xl mx-auto w-full text-center py-unit-4" id="input-section">
+      <h2 class="font-display-lg text-[28px] leading-tight mb-2 text-on-surface">Ready to capture?</h2>
+      <p class="font-body-md text-body-sm text-on-surface-variant mb-unit-6">Paste a video link or playlist URL below to start the high-speed extraction engine.</p>
+      <div class="bg-surface-container p-1 rounded-full border border-outline-variant flex items-center gap-2 group focus-within:border-primary transition-all" id="url-bar">
+        <div class="flex-1 flex items-center px-4">
+          <span class="material-symbols-outlined text-on-surface-variant mr-3 group-focus-within:text-primary transition-colors">link</span>
+          <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-mono-label text-[12px] py-2.5" placeholder="https://www.youtube.com/watch?v=..." type="text"/>
+        </div>
+        <button id="quickstart-btn" class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-full font-label-caps text-[11px] flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+          Quick Start
+          <span class="material-symbols-outlined" style="font-size: 16px;">bolt</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-12 gap-unit-4 max-w-5xl mx-auto w-full pb-unit-6">
+
+      <!-- Presets & Quality -->
+      <div class="col-span-12 md:col-span-8 bg-surface-container border border-outline-variant rounded-xl p-unit-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-unit-4">
+            <h3 class="font-title-sm text-[16px] flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary" style="font-size: 20px;">tune</span>
+              Preset Configuration
+            </h3>
+            <span class="font-label-caps text-[9px] text-on-surface-variant bg-surface-container-high px-1.5 py-0.5 rounded">Advanced Mode Available</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-unit-4">
+            <!-- Format buttons — V+A FIRST -->
+            <div class="space-y-2">
+              <label class="font-label-caps text-[10px] text-on-surface-variant block uppercase tracking-wide">Format</label>
+              <div class="grid grid-cols-4 gap-2" id="format-buttons">
+                <!-- V+A -->
+                <button data-fmt="best" class="fmt-btn active py-2 border border-primary text-primary bg-primary-container/5 rounded-lg font-label-caps text-[10px] transition-colors flex items-center justify-center gap-0.5">
+                  <span class="material-symbols-outlined" style="font-size:11px;">videocam</span>+<span class="material-symbols-outlined" style="font-size:11px;">volume_up</span>
+                </button>
+                <!-- MP4 -->
+                <button data-fmt="mp4" class="fmt-btn py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container-high rounded-lg font-label-caps text-[10px] transition-colors">MP4</button>
+                <!-- MKV -->
+                <button data-fmt="mkv" class="fmt-btn py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container-high rounded-lg font-label-caps text-[10px] transition-colors">MKV</button>
+                <!-- MP3 -->
+                <button data-fmt="mp3" class="fmt-btn py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container-high rounded-lg font-label-caps text-[10px] transition-colors">MP3</button>
+              </div>
+            </div>
+
+            <!-- Quality dropdown -->
+            <div class="space-y-2">
+              <label class="font-label-caps text-[10px] text-on-surface-variant block uppercase tracking-wide">Quality Target</label>
+              <div class="relative">
+                <button id="quality-btn" class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-2 px-3 font-body-sm text-[12px] flex justify-between items-center focus:outline-none focus:border-primary transition-colors text-on-surface">
+                  <span id="quality-label">Best Available (Auto)</span>
+                  <span class="material-symbols-outlined text-on-surface-variant transition-colors" style="font-size: 18px;">expand_more</span>
+                </button>
+                <div id="quality-dropdown" class="absolute top-full left-0 mt-1 w-full bg-surface-container-high border border-outline-variant rounded-lg shadow-2xl z-[100] py-1">
+                  <div class="quality-opt px-3 py-1.5 hover:bg-primary-container/10 hover:text-primary cursor-pointer transition-colors text-[12px] text-on-surface" data-q="best">Best Available (Auto)</div>
+                  <div class="quality-opt px-3 py-1.5 hover:bg-primary-container/10 hover:text-primary cursor-pointer transition-colors text-[12px] text-on-surface" data-q="2160">4K UHD (2160p)</div>
+                  <div class="quality-opt px-3 py-1.5 hover:bg-primary-container/10 hover:text-primary cursor-pointer transition-colors text-[12px] text-on-surface" data-q="1080">1080p Full HD</div>
+                  <div class="quality-opt px-3 py-1.5 hover:bg-primary-container/10 hover:text-primary cursor-pointer transition-colors text-[12px] text-on-surface" data-q="720">720p HD</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Directory -->
+        <div class="mt-4 p-unit-3 bg-surface-container-low border border-outline-variant border-dashed rounded-lg flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px;">folder_open</span>
+            <div>
+              <p class="font-body-sm text-[11px] leading-tight">Download Directory</p>
+              <p id="dir-display" class="font-mono-label text-[10px] text-on-surface-variant truncate max-w-[240px]">Loading…</p>
+            </div>
+          </div>
+          <button id="dir-change-btn" class="text-primary font-label-caps text-[10px] hover:underline">Change</button>
+        </div>
+      </div>
+
+      <!-- Stats / Download button -->
+      <div class="col-span-12 md:col-span-4 flex flex-col gap-unit-4">
+        <button id="download-btn" class="bg-primary text-on-primary rounded-xl p-unit-4 flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden min-h-[120px] hover:brightness-110 active:scale-95 transition-all w-full">
+          <span class="material-symbols-outlined mb-2" style="font-size: 32px;">download</span>
+          <h4 class="font-headline-md text-[18px]">Download</h4>
+          <p class="font-body-sm text-[11px] mt-1 opacity-80">Start downloading the URL above</p>
+        </button>
+        <div class="bg-surface-container border border-outline-variant rounded-xl p-unit-4">
+          <h4 class="font-label-caps text-[10px] text-on-surface-variant mb-unit-2 uppercase tracking-wide">Disk Space</h4>
+          <div class="flex justify-between items-end mb-1.5">
+            <span id="disk-free" class="font-headline-md text-[20px]">—</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant">Available</span>
+          </div>
+          <div class="w-full h-1 bg-surface-container-low rounded-full overflow-hidden">
+            <div id="disk-bar" class="h-full bg-primary transition-all" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Downloads Feed -->
+      <div class="col-span-12">
+        <div class="flex items-center justify-between mb-unit-3 px-1">
+          <h3 class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Active Downloads</h3>
+          <a class="font-body-sm text-[11px] text-primary hover:underline" href="/queue">View All Queue</a>
+        </div>
+        <div id="active-downloads-list" class="space-y-unit-2">
+          <div class="text-center py-8 text-on-surface-variant font-body-sm text-[12px] opacity-50">
+            No active downloads. Paste a URL above to get started.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div class="fixed bottom-0 right-56 left-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none z-10"></div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+const state = {
+  selectedFormat:  'best',
+  selectedQuality: 'best',
+  downloadDir:     '',
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function api(path, opts = {}) {
+  return fetch(path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  }).then(r => r.json());
+}
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+function shortTitle(t, max = 55) {
+  if (!t) return '—';
+  if (t.startsWith('http')) return t.length > max ? t.slice(0, max) + '…' : t;
+  return t.length > max ? t.slice(0, max) + '…' : t;
+}
+
+function fmtStatus(job) {
+  if (job.status === 'downloading') return `${job.progress.toFixed(1)}%`;
+  if (job.status === 'paused')      return 'PAUSED';
+  if (job.status === 'done')        return 'DONE';
+  if (job.status === 'error')       return 'ERROR';
+  if (job.status === 'cancelled')   return 'CANCELLED';
+  return 'PENDING';
+}
+
+// ─── Format buttons ───────────────────────────────────────────────────────────
+document.querySelectorAll('.fmt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.selectedFormat = btn.dataset.fmt;
+  });
+});
+
+// ─── Quality dropdown ─────────────────────────────────────────────────────────
+const qualityBtn      = document.getElementById('quality-btn');
+const qualityDropdown = document.getElementById('quality-dropdown');
+const qualityLabel    = document.getElementById('quality-label');
+
+qualityBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  qualityDropdown.classList.toggle('open');
+});
+document.addEventListener('click', () => qualityDropdown.classList.remove('open'));
+
+document.querySelectorAll('.quality-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    state.selectedQuality = opt.dataset.q;
+    qualityLabel.textContent = opt.textContent.trim();
+    qualityDropdown.classList.remove('open');
+  });
+});
+
+// ─── Directory change ─────────────────────────────────────────────────────────
+document.getElementById('dir-change-btn').addEventListener('click', async () => {
+  const res = await api('/api/browse', { method: 'POST', body: '{}' });
+  if (res.path) {
+    state.downloadDir = res.path;
+    document.getElementById('dir-display').textContent = res.path;
+    await api('/api/settings', { method: 'POST', body: JSON.stringify({ download_dir: res.path }) });
+    toast('Download directory updated');
+  }
+});
+
+// ─── Start download ───────────────────────────────────────────────────────────
+async function startDownload() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) { toast('Please enter a URL', 'error'); return; }
+  try {
+    const res = await api('/api/download', {
+      method: 'POST',
+      body: JSON.stringify({
+        url,
+        format:     state.selectedFormat,
+        quality:    state.selectedQuality,
+        output_dir: state.downloadDir,
+      }),
+    });
+    if (res.error) { toast(res.error, 'error'); return; }
+    document.getElementById('url-input').value = '';
+    toast('Download queued! ⚡');
+  } catch (e) {
+    toast('Failed to connect to backend', 'error');
+  }
+}
+
+document.getElementById('download-btn').addEventListener('click', startDownload);
+document.getElementById('quickstart-btn').addEventListener('click', startDownload);
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startDownload();
+});
+
+// ─── Active downloads render ──────────────────────────────────────────────────
+const jobsMap  = {};
+const listEl   = document.getElementById('active-downloads-list');
+const SHOW_IN  = new Set(['pending', 'downloading', 'paused', 'error', 'done']);
+
+function renderJobs() {
+  const visible = Object.values(jobsMap)
+    .filter(j => SHOW_IN.has(j.status))
+    .slice(-5)
+    .reverse();
+
+  if (visible.length === 0) {
+    listEl.innerHTML = `<div class="text-center py-8 text-on-surface-variant font-body-sm text-[12px] opacity-50">
+      No active downloads. Paste a URL above to get started.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = visible.map(job => {
+    const pct      = Math.min(100, job.progress || 0);
+    const isPaused = job.status === 'paused';
+    const isDone   = job.status === 'done';
+    const isError  = job.status === 'error';
+    const barColor = isError ? '#ffb4ab' : isPaused ? '#414755' : '#adc6ff';
+
+    return `
+    <div class="group bg-surface-container border border-outline-variant rounded-xl p-unit-3 flex items-center gap-unit-4 hover:border-primary/50 transition-all ${isPaused ? 'opacity-70' : ''}">
+      <div class="w-16 h-10 bg-surface-container-low rounded relative overflow-hidden shrink-0 border border-outline-variant flex items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">smart_display</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-body-md text-[13px] truncate text-on-surface group-hover:text-primary transition-colors">${shortTitle(job.title)}</h4>
+          <span class="font-mono-label text-[10px] ${isError ? 'text-error' : isDone ? 'text-[#2e7d32]' : 'text-primary'} ${isDone ? '' : 'bg-primary-container/10'} px-1 rounded ml-2 shrink-0" ${isDone ? "style='background: rgba(46,125,50,0.12)'" : ''}>${fmtStatus(job)}</span>
+        </div>
+        <div class="w-full h-[2px] bg-surface-container-low mb-1.5">
+          <div style="width:${pct}%; background:${barColor}; height:100%; transition:width 0.4s;"></div>
+        </div>
+        <div class="flex gap-4 text-on-surface-variant font-mono-label text-[10px]">
+          ${job.speed ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">speed</span> ${job.speed}</span>` : ''}
+          ${job.eta   ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">timer</span> ${job.eta}</span>` : ''}
+          ${job.format || job.resolution ? `<span>${job.format ? job.format : ''}${job.format && job.resolution ? ' • ' : ''}${job.resolution ? job.resolution : ''}</span>` : ''}
+          ${job.video_size_bytes && job.audio_size_bytes && job.video_downloaded_bytes != null && job.audio_downloaded_bytes != null ? `<span>V=${job.video_downloaded_mb} / ${job.video_size_mb} • A=${job.audio_downloaded_mb} / ${job.audio_size_mb}</span>` : (job.downloaded_mb && job.size_mb ? `<span>${job.downloaded_mb} / ${job.size_mb}</span>` : (job.size_mb ? `<span>${job.size_mb}</span>` : ''))}
+          ${isError   ? `<span class="text-error truncate max-w-[200px]">${job.error || 'Unknown error'}</span>` : ''}
+        </div>
+      </div>
+      <div class="flex gap-1">
+        ${job.status === 'downloading' ? `
+          <button onclick="jobAction('${job.id}','pause')" class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" title="Pause">
+            <span class="material-symbols-outlined" style="font-size:18px;">pause</span>
+          </button>` : ''}
+        ${isPaused ? `
+          <button onclick="jobAction('${job.id}','resume')" class="p-1.5 hover:bg-primary-container/20 hover:text-primary rounded text-on-surface-variant transition-colors" title="Resume">
+            <span class="material-symbols-outlined" style="font-size:18px;">play_arrow</span>
+          </button>` : ''}
+        ${job.status !== 'cancelled' && job.status !== 'done' ? `
+          <button onclick="jobAction('${job.id}','cancel')" class="p-1.5 hover:bg-error/10 hover:text-error rounded text-on-surface-variant transition-colors" title="Cancel">
+            <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+          </button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function jobAction(id, action) {
+  await api(`/api/jobs/${id}/${action}`, { method: 'POST', body: '{}' });
+}
+
+// ─── SSE ──────────────────────────────────────────────────────────────────────
+function connectSSE() {
+  const es = new EventSource('/api/events');
+  es.addEventListener('job_update', e => {
+    const job = JSON.parse(e.data);
+    jobsMap[job.id] = job;
+    renderJobs();
+  });
+  es.onerror = () => setTimeout(connectSSE, 3000);
+}
+connectSSE();
+
+// ─── System stats (disk, CPU, RAM) ───────────────────────────────────────────
+async function loadSystemStats() {
+  try {
+    const stats = await api('/api/system');
+    // Disk stats
+    const diskFree = (stats.disk.free / 1024 / 1024 / 1024).toFixed(1);
+    document.getElementById('disk-free').textContent = `${diskFree} GB`;
+    document.getElementById('disk-bar').style.width = `${Math.min(100, stats.disk.percent)}%`;
+  } catch (e) {
+    console.log('Could not load system stats:', e);
+  }
+}
+
+// ─── Settings (load dir + version) ───────────────────────────────────────────
+async function init() {
+  const [s, deps] = await Promise.all([
+    api('/api/settings'),
+    api('/api/check'),
+  ]);
+  state.downloadDir = s.download_dir || '';
+  document.getElementById('dir-display').textContent = s.download_dir || '—';
+  document.getElementById('ytdlp-version').textContent =
+    deps.ytdlp ? `${deps.ytdlp}` : 'not found';
+  loadSystemStats();
+  // Refresh system stats every 5 seconds
+  setInterval(loadSystemStats, 5000);
+}
+
+function scrollToInput() {
+  document.getElementById('input-section').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('url-input').focus();
+}
+
+init();
+</script>
+</body></html>

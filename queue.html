@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DLP-Utility - Queue</title>
+<link rel="icon" href="/app_icon.ico" type="image/x-icon"/>
+<meta name="application-name" content="DLP-Utility"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-error": "#690005", "primary-container": "#4b8eff", "tertiary": "#bcc7de",
+          "surface-container-low": "#131b2e", "error-container": "#93000a",
+          "surface-container": "#171f33", "on-background": "#dae2fd",
+          "on-tertiary-fixed": "#111c2d", "on-secondary": "#233143",
+          "outline-variant": "#414755", "inverse-surface": "#dae2fd",
+          "secondary-fixed-dim": "#b9c8de", "secondary": "#b9c8de",
+          "on-secondary-fixed": "#0d1c2d", "surface-dim": "#0b1326",
+          "background": "#0b1326", "tertiary-container": "#8691a7",
+          "on-secondary-fixed-variant": "#39485a", "error": "#ffb4ab",
+          "on-surface": "#dae2fd", "on-primary-fixed-variant": "#004493",
+          "outline": "#8b90a0", "surface-container-highest": "#2d3449",
+          "on-error-container": "#ffdad6", "tertiary-fixed": "#d8e3fb",
+          "on-surface-variant": "#c1c6d7", "primary-fixed-dim": "#adc6ff",
+          "inverse-on-surface": "#283044", "on-primary-fixed": "#001a41",
+          "on-tertiary": "#263143", "secondary-fixed": "#d4e4fa",
+          "surface-bright": "#31394d", "on-primary": "#002e69",
+          "primary": "#adc6ff", "surface": "#0b1326", "inverse-primary": "#005bc1",
+          "surface-container-high": "#222a3d", "tertiary-fixed-dim": "#bcc7de",
+          "on-primary-container": "#00285c", "surface-container-lowest": "#060e20",
+          "surface-variant": "#2d3449", "on-secondary-container": "#a7b6cc",
+          "secondary-container": "#39485a", "on-tertiary-container": "#1f2a3c",
+          "on-tertiary-fixed-variant": "#3c475a", "surface-tint": "#adc6ff",
+          "primary-fixed": "#d8e2ff"
+        },
+        "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+        "spacing": { "unit-2": "8px", "gutter": "16px", "container-margin": "24px", "unit-4": "16px", "unit-6": "24px", "unit-8": "32px", "base": "4px", "unit-1": "4px" },
+        "fontFamily": { "headline-md": ["Inter"], "mono-label": ["JetBrains Mono"], "label-caps": ["Inter"], "display-lg": ["Inter"], "body-sm": ["Inter"], "title-sm": ["Inter"], "body-md": ["Inter"] },
+        "fontSize": {
+          "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "mono-label":  ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+          "label-caps":  ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "display-lg":  ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+          "body-sm":     ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+          "title-sm":    ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+          "body-md":     ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { background-color: #0b1326; color: #dae2fd; width: 100%; height: 100vh; margin: 0; overflow: hidden; font-family: Inter, sans-serif; }
+  html, body { height: 100%; }
+  .app-container { width: 100%; height: 100%; display: flex; overflow: hidden; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: #171f33; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #414755; border-radius: 2px; }
+</style>
+</head>
+<body class="font-body-md text-body-md overflow-hidden">
+<div class="app-container">
+
+<!-- SideNavBar -->
+<aside class="w-60 h-full flex-shrink-0 bg-surface-container border-r border-outline-variant flex flex-col py-unit-6 z-20">
+  <div class="px-gutter mb-unit-8">
+    <div class="flex items-center gap-unit-2 mb-1">
+      <span class="material-symbols-outlined text-primary">video_library</span>
+      <span class="font-headline-md text-headline-md text-on-surface">DLP-Utility</span>
+    </div>
+    <span class="font-label-caps text-label-caps text-on-surface-variant opacity-60" id="ytdlp-version">loading…</span>
+  </div>
+  <nav class="flex-1 px-unit-2 space-y-1">
+    <a class="flex items-center gap-unit-4 px-gutter py-unit-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded" href="/">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="font-label-caps text-label-caps">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-unit-4 px-gutter py-unit-2 text-primary bg-primary-container/10 border-r-2 border-primary transition-all duration-200 rounded" href="/queue">
+      <span class="material-symbols-outlined">list_alt</span>
+      <span class="font-label-caps text-label-caps">Queue</span>
+    </a>
+  </nav>
+  <div class="px-unit-2 mt-auto pt-unit-6 border-t border-outline-variant/30 space-y-1">
+    <button onclick="window.location='/'" class="w-full flex items-center gap-unit-4 px-gutter py-unit-2 bg-primary text-on-primary font-label-caps text-label-caps rounded mb-unit-4 active:scale-95 transition-transform">
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      New Download
+    </button>
+    <a class="flex items-center gap-unit-4 px-gutter py-unit-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded" href="/settings">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="font-label-caps text-label-caps">Settings</span>
+    </a>
+  </div>
+</aside>
+
+<div class="flex-1 flex flex-col h-full min-w-0">
+  <!-- TopNavBar -->
+  <header class="w-full h-16 bg-surface-dim border-b border-outline-variant flex items-center px-gutter z-10 flex-shrink-0">
+    <h2 class="font-headline-md text-[16px] text-on-surface-variant">Queue</h2>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto custom-scrollbar p-gutter bg-surface-dim">
+    <div class="max-w-[1100px] mx-auto">
+
+      <!-- Header & Bulk Controls -->
+      <div class="flex flex-row justify-between items-center mb-unit-6 gap-unit-4">
+        <div>
+          <h1 class="font-display-lg text-display-lg text-on-background">Active Queue</h1>
+          <p id="queue-summary" class="font-body-sm text-body-sm text-on-surface-variant mt-1">No active tasks</p>
+        </div>
+        <div class="flex items-center gap-unit-2">
+          <button id="pause-all-btn" class="flex items-center gap-unit-2 px-unit-4 py-unit-2 bg-surface-container-high border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-highest transition-colors active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">pause</span>
+            Pause All
+          </button>
+          <button id="cancel-all-btn" class="flex items-center gap-unit-2 px-unit-4 py-unit-2 bg-error-container/20 border border-error/30 rounded font-label-caps text-label-caps text-error hover:bg-error-container/40 transition-colors active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+            Cancel All
+          </button>
+        </div>
+      </div>
+
+      <!-- Queue List (dynamic) -->
+      <div id="queue-list" class="space-y-unit-4">
+        <div class="text-center py-16 text-on-surface-variant font-body-sm text-[12px] opacity-40">
+          <span class="material-symbols-outlined text-4xl block mb-2">cloud_download</span>
+          No downloads yet. Go to the Dashboard and paste a URL to get started.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Status Bar -->
+  <footer class="h-8 bg-surface-container border-t border-outline-variant flex items-center justify-between px-gutter flex-shrink-0">
+    <div class="flex items-center gap-unit-4 font-mono-label text-mono-label text-on-surface-variant">
+      <div class="flex items-center gap-1">
+        <span id="status-dot" class="w-2 h-2 rounded-full bg-outline-variant"></span>
+        <span id="status-text">Idle</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-unit-4 font-mono-label text-mono-label text-on-surface-variant">
+      <span id="total-speed" class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-[14px]">download</span> —
+      </span>
+    </div>
+  </footer>
+</div>
+</div>
+
+<script>
+const jobsMap = {};
+
+function api(path, opts = {}) {
+  return fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts }).then(r => r.json());
+}
+
+function shortTitle(t, max = 70) {
+  if (!t) return '—';
+  if (t.startsWith('http')) return t.length > max ? t.slice(0, max) + '…' : t;
+  return t.length > max ? t.slice(0, max) + '…' : t;
+}
+
+function statusBadge(job) {
+  const map = {
+    pending:     ['text-on-surface-variant bg-surface-container-highest', 'PENDING'],
+    downloading: ['text-primary bg-primary-container/10', `${job.progress.toFixed(1)}%`],
+    paused:      ['text-on-surface-variant bg-surface-container-highest', 'PAUSED'],
+    done:        ['text-green-400 bg-green-400/10', 'DONE'],
+    error:       ['text-error bg-error/10', 'ERROR'],
+    cancelled:   ['text-on-surface-variant bg-surface-container-highest', 'CANCELLED'],
+  };
+  const [cls, label] = map[job.status] || ['text-on-surface-variant', job.status];
+  return `<span class="font-mono-label text-[10px] px-1 rounded uppercase ${cls}">${label}</span>`;
+}
+
+function barColor(job) {
+  if (job.status === 'error')   return '#ffb4ab';
+  if (job.status === 'paused')  return '#414755';
+  if (job.status === 'done')    return '#81c784';
+  return '#adc6ff';
+}
+
+function renderQueue() {
+  const list   = document.getElementById('queue-list');
+  const all    = Object.values(jobsMap).reverse();
+  const active = all.filter(j => j.status === 'downloading');
+
+  // Summary
+  const activeCount = all.filter(j => ['downloading', 'pending'].includes(j.status)).length;
+  const totalSpeed  = active.reduce((sum, j) => {
+    const m = j.speed ? j.speed.match(/([\d.]+)/) : null;
+    return sum + (m ? parseFloat(m[1]) : 0);
+  }, 0);
+
+  document.getElementById('queue-summary').textContent =
+    activeCount > 0
+      ? `${activeCount} active task${activeCount > 1 ? 's' : ''}`
+      : 'No active tasks';
+
+  document.getElementById('total-speed').innerHTML =
+    `<span class="material-symbols-outlined text-[14px]">download</span> ${
+      totalSpeed > 0 ? totalSpeed.toFixed(1) + ' MB/s' : '—'
+    }`;
+
+  const dot  = document.getElementById('status-dot');
+  const txt  = document.getElementById('status-text');
+  if (activeCount > 0) {
+    dot.className = 'w-2 h-2 rounded-full bg-primary animate-pulse';
+    txt.textContent = 'Downloading';
+  } else {
+    dot.className = 'w-2 h-2 rounded-full bg-outline-variant';
+    txt.textContent = 'Idle';
+  }
+
+  if (all.length === 0) {
+    list.innerHTML = `<div class="text-center py-16 text-on-surface-variant font-body-sm text-[12px] opacity-40">
+      <span class="material-symbols-outlined text-4xl block mb-2">cloud_download</span>
+      No downloads yet. Go to the Dashboard and paste a URL to get started.</div>`;
+    return;
+  }
+
+  list.innerHTML = all.map(job => {
+    const pct      = Math.min(100, job.progress || 0);
+    const isPaused = job.status === 'paused';
+    const isActive = job.status === 'downloading';
+    const isDone   = job.status === 'done';
+    const isError  = job.status === 'error';
+    const isDead   = job.status === 'cancelled';
+
+    return `
+    <div class="group bg-surface-container border border-outline-variant p-unit-4 flex gap-unit-4 hover:bg-surface-container-high transition-colors rounded-xl ${(isPaused || isDead) ? 'opacity-70' : ''}">
+      <div class="relative w-44 aspect-video bg-surface-container-highest overflow-hidden rounded-lg flex-shrink-0 flex items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant" style="font-size:32px;">${isDone ? 'check_circle' : isError ? 'error' : 'smart_display'}</span>
+        ${isPaused ? `<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-4xl">pause_circle</span></div>` : ''}
+        ${isDone ? `<div class="absolute inset-0 bg-green-500/10 flex items-center justify-center"></div>` : ''}
+      </div>
+      <div class="flex-1 min-w-0 flex flex-col justify-center">
+        <div class="flex justify-between items-start mb-unit-2">
+          <h3 class="font-title-sm text-title-sm text-on-surface truncate pr-4">${shortTitle(job.title)}</h3>
+          <div class="flex items-center gap-unit-1 flex-shrink-0">
+            ${statusBadge(job)}
+            ${isActive ? `<button onclick="jobAction('${job.id}','pause')" class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors" title="Pause">
+              <span class="material-symbols-outlined text-[20px]">pause</span></button>` : ''}
+            ${isPaused ? `<button onclick="jobAction('${job.id}','resume')" class="p-1.5 hover:bg-primary-container/20 hover:text-primary rounded text-primary transition-colors" title="Resume">
+              <span class="material-symbols-outlined text-[20px]">play_arrow</span></button>` : ''}
+            ${!isDone && !isDead ? `<button onclick="jobAction('${job.id}','cancel')" class="p-1.5 hover:bg-error-container/20 hover:text-error rounded text-on-surface-variant transition-colors" title="Cancel">
+              <span class="material-symbols-outlined text-[20px]">close</span></button>` : ''}
+          </div>
+        </div>
+        <div class="mb-unit-2">
+          <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden mb-2">
+            <div style="width:${pct}%; background:${barColor(job)}; height:100%; transition:width 0.4s; box-shadow:${isActive ? '0 0 8px rgba(173,198,255,0.4)' : 'none'};"></div>
+          </div>
+          <div class="flex justify-between items-center font-mono-label text-mono-label text-on-surface-variant">
+            <div class="flex items-center gap-3">
+              <span class="${isActive ? 'text-primary' : isDone ? 'text-green-400' : ''} font-bold">${pct.toFixed(1)}%</span>
+              ${job.speed ? `<span>•</span><span>${job.speed}</span>` : ''}
+              ${job.format || job.resolution ? `<span>•</span><span>${job.format ? job.format : ''}${job.format && job.resolution ? ' • ' : ''}${job.resolution ? job.resolution : ''}</span>` : ''}
+              ${job.downloaded_mb || job.size_mb ? `<span>•</span><span>${job.downloaded_mb ? job.downloaded_mb : '0.00 MB'}${job.size_mb ? ' / ' + job.size_mb : ''}</span>` : ''}
+              ${isError   ? `<span class="text-error truncate max-w-[300px]">${job.error || 'Unknown error'}</span>` : ''}
+              ${isPaused  ? `<span class="bg-secondary-container/40 px-1.5 rounded-sm">PAUSED</span>` : ''}
+            </div>
+            ${job.eta ? `<span class="text-on-surface">ETA: ${job.eta}</span>` : ''}
+          </div>
+        </div>
+        <div class="font-mono-label text-[9px] text-on-surface-variant truncate opacity-50">${job.url}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function jobAction(id, action) {
+  await api(`/api/jobs/${id}/${action}`, { method: 'POST', body: '{}' });
+}
+
+document.getElementById('pause-all-btn').addEventListener('click', () =>
+  api('/api/jobs/pause-all', { method: 'POST', body: '{}' })
+);
+document.getElementById('cancel-all-btn').addEventListener('click', () =>
+  api('/api/jobs/cancel-all', { method: 'POST', body: '{}' })
+);
+
+// SSE
+function connectSSE() {
+  const es = new EventSource('/api/events');
+  es.addEventListener('job_update', e => {
+    const job = JSON.parse(e.data);
+    jobsMap[job.id] = job;
+    renderQueue();
+  });
+  es.onerror = () => setTimeout(connectSSE, 3000);
+}
+connectSSE();
+
+// Version
+fetch('/api/check').then(r => r.json()).then(d => {
+  document.getElementById('ytdlp-version').textContent = d.ytdlp ? `v${d.ytdlp}` : 'not found';
+});
+</script>
+</body></html>
