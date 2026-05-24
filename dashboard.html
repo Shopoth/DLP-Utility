@@ -262,6 +262,42 @@ function shortTitle(t, max = 55) {
   return t.length > max ? t.slice(0, max) + '…' : t;
 }
 
+function formatSizeBytes(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function formatJobSize(job) {
+  // ── done: show combined total (video + audio summed) ──────────────────────
+  if (job.status === 'done') {
+    if (job.size_mb) return `<span>${job.size_mb}</span>`;
+    const total = (job.video_size_bytes || 0) + (job.audio_size_bytes || 0);
+    if (total) return `<span>${(total/1024/1024).toFixed(2)} MB</span>`;
+    return '';
+  }
+
+  // ── downloading: per-stream display ───────────────────────────────────────
+  const stream = job._current_stream;
+  if (stream === 'video') {
+    const dl  = job.video_downloaded_mb;
+    const tot = job.video_size_mb;
+    if (dl && tot) return `<span>${dl} / ${tot} <span style="opacity:0.55;font-size:9px;">[video]</span></span>`;
+    if (dl)        return `<span>${dl} / ? <span style="opacity:0.55;font-size:9px;">[video]</span></span>`;
+  }
+  if (stream === 'audio') {
+    const dl  = job.audio_downloaded_mb;
+    const tot = job.audio_size_mb;
+    if (dl && tot) return `<span>${dl} / ${tot} <span style="opacity:0.55;font-size:9px;">[audio]</span></span>`;
+    if (dl)        return `<span>${dl} / ? <span style="opacity:0.55;font-size:9px;">[audio]</span></span>`;
+  }
+
+  // ── single-stream fallback ────────────────────────────────────────────────
+  if (job.downloaded_mb && job.size_mb) {
+    return `<span>${job.downloaded_mb} / ${job.size_mb}</span>`;
+  }
+  if (job.size_mb) return `<span>${job.size_mb}</span>`;
+  return '';
+}
+
 function fmtStatus(job) {
   if (job.status === 'downloading') return `${job.progress.toFixed(1)}%`;
   if (job.status === 'paused')      return 'PAUSED';
@@ -379,7 +415,7 @@ function renderJobs() {
           ${job.speed ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">speed</span> ${job.speed}</span>` : ''}
           ${job.eta   ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px;">timer</span> ${job.eta}</span>` : ''}
           ${job.format || job.resolution ? `<span>${job.format ? job.format : ''}${job.format && job.resolution ? ' • ' : ''}${job.resolution ? job.resolution : ''}</span>` : ''}
-          ${job.video_size_bytes && job.audio_size_bytes && job.video_downloaded_bytes != null && job.audio_downloaded_bytes != null ? `<span>V=${job.video_downloaded_mb} / ${job.video_size_mb} • A=${job.audio_downloaded_mb} / ${job.audio_size_mb}</span>` : (job.downloaded_mb && job.size_mb ? `<span>${job.downloaded_mb} / ${job.size_mb}</span>` : (job.size_mb ? `<span>${job.size_mb}</span>` : ''))}
+          ${formatJobSize(job)}
           ${isError   ? `<span class="text-error truncate max-w-[200px]">${job.error || 'Unknown error'}</span>` : ''}
         </div>
       </div>
@@ -439,7 +475,7 @@ async function init() {
   state.downloadDir = s.download_dir || '';
   document.getElementById('dir-display').textContent = s.download_dir || '—';
   document.getElementById('ytdlp-version').textContent =
-    deps.ytdlp ? `${deps.ytdlp}` : 'not found';
+    deps.ytdlp ? `v${deps.ytdlp}` : 'not found';
   loadSystemStats();
   // Refresh system stats every 5 seconds
   setInterval(loadSystemStats, 5000);

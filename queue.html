@@ -167,6 +167,42 @@ function shortTitle(t, max = 70) {
   return t.length > max ? t.slice(0, max) + '…' : t;
 }
 
+function formatSizeBytes(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function formatJobSize(job) {
+  // ── done: show combined total (video + audio summed) ──────────────────────
+  if (job.status === 'done') {
+    if (job.size_mb) return job.size_mb;
+    const total = (job.video_size_bytes || 0) + (job.audio_size_bytes || 0);
+    if (total) return `${(total/1024/1024).toFixed(2)} MB`;
+    return '';
+  }
+
+  // ── downloading: per-stream display ───────────────────────────────────────
+  const stream = job._current_stream;
+  if (stream === 'video') {
+    const dl  = job.video_downloaded_mb;
+    const tot = job.video_size_mb;
+    if (dl && tot) return `${dl} / ${tot} <span style="opacity:0.5;font-size:9px;">[video]</span>`;
+    if (dl)        return `${dl} / ? <span style="opacity:0.5;font-size:9px;">[video]</span>`;
+  }
+  if (stream === 'audio') {
+    const dl  = job.audio_downloaded_mb;
+    const tot = job.audio_size_mb;
+    if (dl && tot) return `${dl} / ${tot} <span style="opacity:0.5;font-size:9px;">[audio]</span>`;
+    if (dl)        return `${dl} / ? <span style="opacity:0.5;font-size:9px;">[audio]</span>`;
+  }
+
+  // ── single-stream fallback ────────────────────────────────────────────────
+  if (job.downloaded_mb && job.size_mb) {
+    return `${job.downloaded_mb} / ${job.size_mb}`;
+  }
+  if (job.size_mb) return job.size_mb;
+  return '';
+}
+
 function statusBadge(job) {
   const map = {
     pending:     ['text-on-surface-variant bg-surface-container-highest', 'PENDING'],
@@ -264,7 +300,7 @@ function renderQueue() {
               <span class="${isActive ? 'text-primary' : isDone ? 'text-green-400' : ''} font-bold">${pct.toFixed(1)}%</span>
               ${job.speed ? `<span>•</span><span>${job.speed}</span>` : ''}
               ${job.format || job.resolution ? `<span>•</span><span>${job.format ? job.format : ''}${job.format && job.resolution ? ' • ' : ''}${job.resolution ? job.resolution : ''}</span>` : ''}
-              ${job.downloaded_mb || job.size_mb ? `<span>•</span><span>${job.downloaded_mb ? job.downloaded_mb : '0.00 MB'}${job.size_mb ? ' / ' + job.size_mb : ''}</span>` : ''}
+              ${formatJobSize(job) ? `<span>•</span><span>${formatJobSize(job)}</span>` : ''}
               ${isError   ? `<span class="text-error truncate max-w-[300px]">${job.error || 'Unknown error'}</span>` : ''}
               ${isPaused  ? `<span class="bg-secondary-container/40 px-1.5 rounded-sm">PAUSED</span>` : ''}
             </div>
